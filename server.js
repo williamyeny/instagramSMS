@@ -64,7 +64,7 @@ app.post('/getsms', function(req, res) {
   }
   var twiml = new twilio.TwimlResponse();
 
-  twiml.message('message successfully sent: ' + bod.slice(spl[1].length + 6, bod.length - 1));
+  twiml.message('message successfully sent: ' + bod.slice(spl[1].length + 6, bod.length));
 
   res.type('text/xml');
   res.send(twiml.toString());
