@@ -4,10 +4,13 @@ var http = require('http').Server(app);
 var path = require('path');
 var request = require('request');
 var twilio = require('twilio');
-var client = twilio('SK785e306d6393a3447f7f79e7afb49e3e','397309ede524e8d035688035e9f4188a');
+var client = twilio('ACe11fd22adcb53a74d88e7c28cd4846e7','66e16a7e5b56937320b571a15b5c61c5');
 var notif;
+var notifList = [];
 var lastTime = Date.now()/1000;
 var currentTime;
+var jar = request.jar();
+request = request.defaults({jar:jar});
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + "/views");
@@ -22,21 +25,45 @@ var csrf;
 var session;
 var ds;
 
+//commenterino
+csrf = '4e63cee629881bc14bbb594f80072e16';
+ds = '3142734096';
+session = 'IGSC25c65dc33d3909cea26a7a9f3fc6102d9a54b8394173ddd16374c753e391d244%3ACEfWrzH8WgaX6SC12xRaLYXQUWWIUkPy%3A%7B%22_token_ver%22%3A2%2C%22_auth_user_id%22%3A3142734096%2C%22_token%22%3A%223142734096%3AzUdNz2uFmIJYMim5ciW7p8zaAhAr9lD0%3A85b0362d8ba4a4ce944a007f23f9656f3025c0958841631fef19fd9f7a25e679%22%2C%22asns%22%3A%7B%22207.87.175.130%22%3A2828%2C%22time%22%3A1460851927%7D%2C%22_auth_user_backend%22%3A%22accounts.backends.CaseInsensitiveModelBackend%22%2C%22last_refreshed%22%3A1460851938.981193%2C%22_platform%22%3A4%7D';
+number = '+16316496635';
+jar.setCookie(request.cookie('ds_user_id=' + ds), 'https://www.instagram.com/');
+jar.setCookie(request.cookie('sessionid=' + session), 'https://www.instagram.com/');
+jar.setCookie(request.cookie('csrftoken=' + csrf), 'https://www.instagram.com/');
+loop();
+
 app.get('/', function(req, res){
   res.render('index');
 });
 
 app.post('/setup', function(req, res) {
-  csrftoken = req.body.csrf;
+  csrf = req.body.csrf;
   session = req.body.session;
   ds = req.body.ds;
 });
 
 app.post('/getsms', function(req, res) {
-  console.log('text: ' + req.body.Body);
+  var bod = req.body.Body;
+  console.log('text: ' + bod);
+  var spl = bod.split(" ");
+  console.log(spl);
+  if (spl[0] == "reply") {
+    var ind = spl[1];
+    request.post({
+      url: 'https://www.instagram.com/web/comments/' + notifList[ind].mediaID + '/add/',
+      headers: {referer: 'https://www.instagram.com/p/' + notifList[ind].mediaCode, 'x-csrftoken': csrf},
+      formData: {comment_text: bod.slice(spl[1].length + 6, bod.length - 1)}, //adding the username of the requester increases question variability which helps hide from the spam filter
+    }, function(error, response, body) {
+      console.log(body); //an HTML response is an error (redirects to error page), JSON is success!
+    });
+    
+  }
   var twiml = new twilio.TwimlResponse();
 
-  twiml.message('message received!');
+  twiml.message('message successfully sent: ' + bod);
 
   res.type('text/xml');
   res.send(twiml.toString());
@@ -50,48 +77,62 @@ function loop() {
     currentTime = Date.now()/1000;
     console.log('\nretrieved json: ' + notif.length);
     console.log('current time: ' + currentTime);
-  });
   
-  for (i = 0; i < notif.length; i++) {
+  
+    for (i = 0; i < notif.length; i++) {
 
-    if (notif[i].timestamp < lastTime) { break; } //if notification is too old, break
+      if (notif[i].timestamp < lastTime) { break; } //if notification is too old, break
 
-    if (notif[i].type != 5 && notif[i].type != 2) { continue; } //5: mentioned somewhere else, 2: own photo
+      if (notif[i].type != 5 && notif[i].type != 2) { continue; } //5: mentioned somewhere else, 2: own photo
 
-    console.log('notification: ' + i);
-    var text = '';
-    var mediaID = '';
-    var mediaCode = '';
-    var username = '';
-
-    //grab data
-    try {
-      text = notif[i].text;
-      mediaID = notif[i].media.id;
-      mediaCode = notif[i].media.code; //needed for headers
-      username = notif[i].user.username;
-    } catch (err) {
-      console.log('error grabbing attributes: ' + err);
-      continue;
-    }
-
-    //trims mediaID; posting an answer requires the part up to an underscore
-    for (j = 0; j < mediaID.length; j++) { 
-      if (mediaID.charAt(j) == '_') {
-        mediaID = mediaID.slice(0, j);
+      console.log('notification: ' + i);
+      
+      var text = notif[i].text;
+      var mediaID = notif[i].media.id;
+      var mediaCode = notif[i].media.code;
+      var username = notif[i].user.username;
+      
+      console.log(text);
+      console.log(mediaID);
+      console.log(mediaCode);
+      console.log(username);
+      
+      notifList.push({
+        text: text,
+        mediaID: mediaID,
+        mediaCode: mediaCode,
+        username: username
+      });
+      
+      
+      //trims mediaID; posting an answer requires the part up to an underscore
+      for (j = 0; j < mediaID.length; j++) { 
+        if (mediaID.charAt(j) == '_') {
+          notifList[notifList.length-1].mediaID = mediaID.slice(0, j);
+        }
       }
+
+
+      //Send an SMS text message
+      client.sendMessage({
+
+        to: number, // Any number Twilio can deliver to
+        from: '+16314173206', // A number you bought from Twilio and can use for outbound communication
+        body: '\nComment #' + notifList.length + '\n\n' + username + ': ' + text + '\n\nType "reply [number] [comment]" to reply'  // body of the SMS message
+
+      }, function(err, responseData) { //this function is executed when a response is received from Twilio
+
+        if (!err) {
+          console.log('error: ' + err);
+        }
+      });
+
     }
-
-    console.log('\ntext: ' + text);
-    console.log('mediaID: '+ mediaID);
-    console.log('mediaCode: ' + mediaCode);
-    console.log('username: ' + username);
-
-  }
-
-  setTimeout(function() {
-    loop();
-  }, 10000);
+    lastTime = currentTime;
+    setTimeout(function() {
+      loop();
+    }, 10000);
+  });
 }
 
 var port = process.env.PORT || 8080;
