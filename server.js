@@ -33,7 +33,7 @@ number = '+16316496635';
 jar.setCookie(request.cookie('ds_user_id=' + ds), 'https://www.instagram.com/');
 jar.setCookie(request.cookie('sessionid=' + session), 'https://www.instagram.com/');
 jar.setCookie(request.cookie('csrftoken=' + csrf), 'https://www.instagram.com/');
-loop();
+
 
 app.get('/', function(req, res){
   res.render('index');
@@ -43,6 +43,9 @@ app.post('/setup', function(req, res) {
   csrf = req.body.csrf;
   session = req.body.session;
   ds = req.body.ds;
+  number = req.body.number;
+  loop();
+  res.render('setup');
 });
 
 app.post('/getsms', function(req, res) {
