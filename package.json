@@ -1,0 +1,25 @@
+{
+  "name": "instagramsms",
+  "version": "1.0.0",
+  "description": "sms and instagram interface",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "instagramSMS"
+  },
+  "keywords": [
+    "instagram",
+    "sms"
+  ],
+  "author": "William Ye",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "request": "^2.71.0",
+    "twilio": "^2.9.1"
+  }
+}

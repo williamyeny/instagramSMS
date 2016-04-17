@@ -1,0 +1,10 @@
+html, body {
+  margin:0;
+  padding:0;
+}
+
+#canvas-container {
+  width:600px;
+  margin:0 auto;
+  margin-top:30px;
+}
