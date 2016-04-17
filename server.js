@@ -27,6 +27,7 @@ app.post('/setup', function(req, res) {
 });
 
 app.post('/getsms', function(req, res) {
+  console.log('sms gotten: ' + req);
   if (twilio.validateExpressRequest(req, '397309ede524e8d035688035e9f4188a')) {
     var twiml = new twilio.TwimlResponse();
 
