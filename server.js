@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 var path = require('path');
 var request = require('request');
 var twilio = require('twilio');
-var client = twilio('AC8cfd7a4e2b3b56346f208774466b82f0','397309ede524e8d035688035e9f4188a');
+var client = twilio('ACe11fd22adcb53a74d88e7c28cd4846e7','66e16a7e5b56937320b571a15b5c61c5');
 var notif;
 var notifList = [];
 var lastTime = Date.now()/1000;
