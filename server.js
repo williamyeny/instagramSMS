@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 var path = require('path');
 var request = require('request');
 var twilio = require('twilio');
-var client = twilio('ACe11fd22adcb53a74d88e7c28cd4846e7','66e16a7e5b56937320b571a15b5c61c5');
+var client = twilio('','');
 var notif;
 var notifList = [];
 var lastTime = Date.now()/1000;
@@ -24,16 +24,11 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 var csrf;
 var session;
 var ds;
+var number;
 
-//commenterino
-csrf = '4e63cee629881bc14bbb594f80072e16';
-ds = '3142734096';
-session = 'IGSC25c65dc33d3909cea26a7a9f3fc6102d9a54b8394173ddd16374c753e391d244%3ACEfWrzH8WgaX6SC12xRaLYXQUWWIUkPy%3A%7B%22_token_ver%22%3A2%2C%22_auth_user_id%22%3A3142734096%2C%22_token%22%3A%223142734096%3AzUdNz2uFmIJYMim5ciW7p8zaAhAr9lD0%3A85b0362d8ba4a4ce944a007f23f9656f3025c0958841631fef19fd9f7a25e679%22%2C%22asns%22%3A%7B%22207.87.175.130%22%3A2828%2C%22time%22%3A1460851927%7D%2C%22_auth_user_backend%22%3A%22accounts.backends.CaseInsensitiveModelBackend%22%2C%22last_refreshed%22%3A1460851938.981193%2C%22_platform%22%3A4%7D';
-number = '+16316496635';
 jar.setCookie(request.cookie('ds_user_id=' + ds), 'https://www.instagram.com/');
 jar.setCookie(request.cookie('sessionid=' + session), 'https://www.instagram.com/');
 jar.setCookie(request.cookie('csrftoken=' + csrf), 'https://www.instagram.com/');
-
 
 app.get('/', function(req, res){
   res.render('index');
