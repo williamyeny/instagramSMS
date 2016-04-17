@@ -26,9 +26,7 @@ var session;
 var ds;
 var number;
 
-jar.setCookie(request.cookie('ds_user_id=' + ds), 'https://www.instagram.com/');
-jar.setCookie(request.cookie('sessionid=' + session), 'https://www.instagram.com/');
-jar.setCookie(request.cookie('csrftoken=' + csrf), 'https://www.instagram.com/');
+
 
 app.get('/', function(req, res){
   res.render('index');
@@ -38,6 +36,11 @@ app.post('/setup', function(req, res) {
   csrf = req.body.csrf;
   session = req.body.session;
   ds = req.body.ds;
+  
+  jar.setCookie(request.cookie('ds_user_id=' + ds), 'https://www.instagram.com/');
+  jar.setCookie(request.cookie('sessionid=' + session), 'https://www.instagram.com/');
+  jar.setCookie(request.cookie('csrftoken=' + csrf), 'https://www.instagram.com/');
+  
   number = req.body.number;
   loop();
   res.render('setup');
