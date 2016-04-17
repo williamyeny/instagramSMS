@@ -52,7 +52,7 @@ app.post('/getsms', function(req, res) {
   var spl = bod.split(" ");
   console.log(spl);
   if (spl[0].toLowerCase() == "reply") {
-    var ind = spl[1] + 1;
+    var ind = spl[1] - 1;
     request.post({
       url: 'https://www.instagram.com/web/comments/' + notifList[ind].mediaID + '/add/',
       headers: {referer: 'https://www.instagram.com/p/' + notifList[ind].mediaCode, 'x-csrftoken': csrf},
