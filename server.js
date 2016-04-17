@@ -4,6 +4,7 @@ var http = require('http').Server(app);
 var path = require('path');
 var request = require('request');
 var twilio = require('twilio');
+var client = twilio('SK785e306d6393a3447f7f79e7afb49e3e','397309ede524e8d035688035e9f4188a');
 var notif;
 var lastTime = Date.now()/1000;
 var currentTime;
@@ -27,7 +28,9 @@ app.post('/setup', function(req, res) {
 });
 
 app.post('/getsms', function(req, res) {
-  console.log('sms gotten: ' + req.Body);
+  for (key in req) {
+    console.log('key: ' + key);
+  }
   var twiml = new twilio.TwimlResponse();
 
   twiml.message('message received!');
