@@ -27,15 +27,13 @@ app.get('/', function(req, res){
 });
 
 app.post('/setup', function(req, res) {
-  csrftoken = req.csrf;
-  session = req.session;
-  ds = req.ds;
+  csrftoken = req.body.csrf;
+  session = req.body.session;
+  ds = req.body.ds;
 });
 
 app.post('/getsms', function(req, res) {
-  for (key in req.body) {
-    console.log('key: ' + key);
-  }
+  console.log('text: ' + req.body.Body);
   var twiml = new twilio.TwimlResponse();
 
   twiml.message('message received!');
