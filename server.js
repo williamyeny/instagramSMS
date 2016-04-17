@@ -56,7 +56,7 @@ app.post('/getsms', function(req, res) {
     request.post({
       url: 'https://www.instagram.com/web/comments/' + notifList[ind].mediaID + '/add/',
       headers: {referer: 'https://www.instagram.com/p/' + notifList[ind].mediaCode, 'x-csrftoken': csrf},
-      formData: {comment_text: bod.slice(spl[1].length + 6, bod.length - 1)}, //adding the username of the requester increases question variability which helps hide from the spam filter
+      formData: {comment_text: '@' + notifList[ind].username + ': '  bod.slice(spl[1].length + 6, bod.length - 1)}, //adding the username of the requester increases question variability which helps hide from the spam filter
     }, function(error, response, body) {
       console.log(body); //an HTML response is an error (redirects to error page), JSON is success!
     });
@@ -132,7 +132,7 @@ function loop() {
     lastTime = currentTime;
     setTimeout(function() {
       loop();
-    }, 10000);
+    }, 2000);
   });
 }
 
