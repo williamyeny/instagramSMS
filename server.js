@@ -27,17 +27,13 @@ app.post('/setup', function(req, res) {
 });
 
 app.post('/getsms', function(req, res) {
-  console.log('sms gotten: ' + req);
-  if (twilio.validateExpressRequest(req, '397309ede524e8d035688035e9f4188a')) {
-    var twiml = new twilio.TwimlResponse();
+  console.log('sms gotten: ' + req.Body);
+  var twiml = new twilio.TwimlResponse();
 
-    twiml.body('message received!');
+  twiml.message('message received!');
 
-    res.type('text/xml');
-    res.send(twiml.toString());
-  } else {
-    res.send('you are not twilio.  Buzz off.');
-  }
+  res.type('text/xml');
+  res.send(twiml.toString());
 });
 
 function loop() {
